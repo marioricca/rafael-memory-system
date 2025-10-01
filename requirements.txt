@@ -1,0 +1,8 @@
+# Python dependencies for Rafael Memory System
+
+# Core requirements (minimal)
+# No external dependencies required for basic functionality
+
+# Optional: For enhanced features
+# ollama  # For local model deployment (install separately via ollama.ai)
+# anthropic  # For Claude API integration
