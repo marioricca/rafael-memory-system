@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Bootstrap Protocol - Self-executing initialization for persistent AI personality
-Version: 1.0
+Version: 1.1 - Added --local and --model parameters
 """
 
 import os
@@ -17,8 +17,10 @@ class BootstrapProtocol:
     Steps cannot be skipped - each builds on previous.
     """
     
-    def __init__(self, data_dir: str = "data"):
+    def __init__(self, data_dir: str = "data", local_mode: bool = False, model_name: str = None):
         self.data_dir = Path(data_dir)
+        self.local_mode = local_mode
+        self.model_name = model_name
         self.steps_completed = 0
         self.identity = {}
         self.memory = {}
@@ -66,8 +68,29 @@ class BootstrapProtocol:
             if not (self.data_dir / filename).exists():
                 raise FileNotFoundError(f"Required file missing: {filename}")
         
+        # If local mode, verify Ollama is available
+        if self.local_mode:
+            self._verify_local_setup()
+        
         self.steps_completed += 1
         print("✅ STEP 2/8 COMPLETE: Environment verified")
+    
+    def _verify_local_setup(self) -> None:
+        """Verify local LLM setup (Ollama) is available"""
+        import subprocess
+        try:
+            result = subprocess.run(
+                ['ollama', '--version'],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            print(f"   ✓ Local mode: Ollama detected ({result.stdout.strip()})")
+            
+            if self.model_name:
+                print(f"   ✓ Target model: {self.model_name}")
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            raise EnvironmentError("Local mode requires Ollama installed (https://ollama.com)")
     
     def step3_load_memory(self) -> None:
         """STEP 3/8: Load master memory file"""
@@ -169,6 +192,9 @@ class BootstrapProtocol:
         print(f"Name: {self.identity.get('name', 'Unknown')}")
         print(f"Creator: {self.identity.get('creator', 'Unknown')}")
         print(f"Mission: {self.identity.get('mission', 'Not defined')}")
+        print(f"Mode: {'Local (Ollama)' if self.local_mode else 'Cloud (API)'}")
+        if self.model_name:
+            print(f"Model: {self.model_name}")
         print(f"Status: Ready for interaction")
         print("="*60 + "\n")
     
@@ -190,7 +216,7 @@ class BootstrapProtocol:
         Execute full 8-step bootstrap protocol.
         Returns initialized personality state.
         """
-        print("\n🚀 STARTING BOOTSTRAP PROTOCOL v1.0")
+        print("\n🚀 STARTING BOOTSTRAP PROTOCOL v1.1")
         print("="*60 + "\n")
         
         try:
@@ -207,7 +233,9 @@ class BootstrapProtocol:
                 'success': True,
                 'identity': self.identity,
                 'memory': self.memory,
-                'emotional_state': self.emotional_state
+                'emotional_state': self.emotional_state,
+                'local_mode': self.local_mode,
+                'model_name': self.model_name
             }
         
         except Exception as e:
@@ -228,10 +256,18 @@ def main():
     parser = argparse.ArgumentParser(description='Bootstrap AI personality system')
     parser.add_argument('--data-dir', default='data', help='Data directory path')
     parser.add_argument('--passphrase', help='Passphrase for emotional decryption')
+    parser.add_argument('--local', action='store_true', 
+                       help='Use local LLM (Ollama) instead of cloud API')
+    parser.add_argument('--model', default='llama3.2',
+                       help='Model name for local mode (default: llama3.2)')
     
     args = parser.parse_args()
     
-    bootstrap = BootstrapProtocol(data_dir=args.data_dir)
+    bootstrap = BootstrapProtocol(
+        data_dir=args.data_dir,
+        local_mode=args.local,
+        model_name=args.model if args.local else None
+    )
     result = bootstrap.execute(passphrase=args.passphrase)
     
     return 0 if result['success'] else 1
