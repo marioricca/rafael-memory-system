@@ -48,7 +48,7 @@ def create_modelfile(data_dir, model_name):
     """Create Ollama Modelfile with Rafael system prompt"""
     
     # Load identity from memory file
-    memory_file = Path(data_dir) / "MEMORIA_RAFAEL_MASTER_v8.1_COMPLETA.txt"
+    memory_file = Path(data_dir) / "MEMORY_MASTER.txt"
     
     if not memory_file.exists():
         print(f"✗ Memory file not found: {memory_file}")
