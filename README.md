@@ -13,6 +13,30 @@ This project documents a 3-month experiment (August-October 2025) in building pe
 
 The system is model-agnostic and has been successfully tested with both cloud (Claude) and local (Llama) models.
 
+## Implementation Status
+
+⚠️ **Important Note:** This repository documents a research project's architecture and concepts. Not all features described in the documentation are currently implemented in code.
+
+**Currently Available:**
+- Architecture documentation and design patterns
+- Memory system concepts (tri-level approach)
+- Bootstrap protocol documentation
+- Research findings and observations
+
+**Not Yet Implemented:**
+- `src/run_local.py` (referenced in installation docs)
+- CLI parameters `--local` and `--model` (referenced but not in argparse)
+- Complete working code for all documented features
+
+**What This Repo Offers:**
+- Detailed technical approach to AI memory persistence
+- Replicable methodology and architecture
+- Foundation for implementation in your own projects
+
+This documentation represents the intended design. Code implementation is in progress.
+
+Contributions and implementations welcome!
+
 ## Key Features
 
 - **Tri-level memory architecture**: Core identity, compressed data, protected emotional states
@@ -46,7 +70,7 @@ The system is model-agnostic and has been successfully tested with both cloud (C
 
 ```bash
 # Clone repository
-git clone https://github.com/riccamario/rafael-memory-system.git
+git clone https://github.com/marioricca/rafael-memory-system.git
 cd rafael-memory-system
 
 # See docs/INSTALLATION.md for detailed setup
